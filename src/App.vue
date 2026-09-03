@@ -34,7 +34,7 @@
   <div class="main-window">
     <main>
       <GoogleMap
-          api-key="AIzaSyB7-94v_wT0QS9MYZ6arI-fS_BhwOJjfFA"
+          api-key="Api_key"
           style="width: 100%; height: 100%"
           :center="center"
           :zoom="15"
