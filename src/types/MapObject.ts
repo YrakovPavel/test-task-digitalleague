@@ -4,5 +4,6 @@ export default interface MapObject{
     description: string;
     latitude: number;
     longitude: number;
-    color?: string;
+    color: string;
+    isVisible: boolean;
 }

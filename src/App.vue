@@ -2,10 +2,8 @@
   import ObjectCard from "@/components/ObjectCard.vue";
   import type MapObject from "@/types/MapObject.ts";
   import markers from "./mock.json"
-  import { GoogleMap, Marker } from 'vue3-google-map'
   import {ref} from "vue";
-
-  const center = { lat: 40.689247, lng: -74.044502 }
+  import CustomMap from "@/components/CustomMap.vue";
 
   let colorsArray: string[] = [];
 
@@ -17,30 +15,25 @@
     if (colorsArray[index]){
       return colorsArray[index];
     }
-    let newColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    let newColor = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
     colorsArray[index] = newColor;
     return newColor;
   }
 
-  const originalArray = markers.markers as MapObject[];
-  const markerArray = originalArray.map((item) => {
+  const markerArray = ref<MapObject[]>((markers.markers.map((item) => {
     let titleArray = item.title.split(" ");
-    return {...item, color: getColor(Number(titleArray[titleArray.length - 1]))}
-  })
+    return {
+      ...item,
+      color: getColor(Number(titleArray[titleArray.length - 1])),
+      isVisible: true}
+  })))
 
 </script>
 
 <template>
   <div class="main-window">
     <main>
-      <GoogleMap
-          api-key="Api_key"
-          style="width: 100%; height: 100%"
-          :center="center"
-          :zoom="15"
-      >
-        <Marker :options="{ position: center }" />
-      </GoogleMap>
+      <CustomMap :originalMarkArray="markerArray"></CustomMap>
     </main>
     <aside>
       <div class="button-panel">
@@ -71,6 +64,9 @@
   aside{
     display: flex;
     flex-direction: column;
+
+    border-style:  none none none solid;
+    border-color: lightgray;
 
     width: 30vw;
     height: 100%;

@@ -8,7 +8,7 @@
     <span class="card__badge" :style="{backgroundColor: mapObject.color}"></span>
     <h5 class="card__title">{{ mapObject.title }}</h5>
     <div class="card__checkbox">
-      <input type="checkbox" checked> Показать
+      <input type="checkbox" checked @click="mapObject.isVisible = !mapObject.isVisible"> Показать
     </div>
     <div class="card__description">
       <b>{{ mapObject.description }}</b>
