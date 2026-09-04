@@ -7,7 +7,7 @@
 
   let colorsArray: string[] = [];
 
-  const showCards = ref<boolean>(true);
+  const showMapObjects = ref<boolean>(true);
 
   //Возвращает готовый цвет, если такая цветовая группа уже существует
   //Иначе генерирует новый цвет
@@ -33,14 +33,14 @@
 <template>
   <div class="main-window">
     <main>
-      <CustomMap :originalMarkArray="markerArray"></CustomMap>
+      <CustomMap :originalMarkArray="markerArray" :isVisible="showMapObjects"></CustomMap>
     </main>
     <aside>
       <div class="button-panel">
-        <button class="btn btn-danger" @click="showCards = false">Очистить</button>
-        <button class="btn btn-primary" @click="showCards = true">Поиск</button>
+        <button class="btn btn-danger" @click="showMapObjects = false">Очистить</button>
+        <button class="btn btn-primary" @click="showMapObjects = true">Поиск</button>
       </div>
-      <div v-if="showCards" class="object-cards">
+      <div v-if="showMapObjects" class="object-cards">
         <ObjectCard
             v-for="marker in markerArray"
             :key="marker.id"

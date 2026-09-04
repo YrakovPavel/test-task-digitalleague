@@ -9,23 +9,15 @@
   import {ref, shallowRef} from "vue";
   import type {YMap} from "@yandex/ymaps3-types";
   import type MapObject from "@/types/MapObject.ts";
-  import type MapMarker from "@/types/MapMarker.ts";
-  import type { LngLat } from '@yandex/ymaps3-types';
-  import type {MarkerColorProps} from "@yandex/ymaps3-default-ui-theme/dist/types/markers/YMapDefaultMarker";
 
   const map = shallowRef<null | YMap>(null);
 
-  const props = defineProps<{originalMarkArray: MapObject[]}>()
+  const props = defineProps<{originalMarkArray: MapObject[], isVisible: boolean}>()
 
-  let markArray= ref<MapMarker[]>(props.originalMarkArray.map((mark)=>{
-    return {
-      ...mark,
-      coordinates: [mark.longitude, mark.latitude],
-      color: {day: mark.color, night: mark.color} as MarkerColorProps,
-      isVisible: mark.isVisible,
-      popupVisible: false,
-    }
-  }))
+  const popupVisibleArray = ref<boolean[]>([]);
+  for (let i = 0; i < props.originalMarkArray.length; i++){
+    popupVisibleArray.value.push(false);
+  }
 </script>
 
 <template>
@@ -40,13 +32,13 @@
   >
     <yandex-map-default-scheme-layer/>
     <yandex-map-default-features-layer/>
-    <div class="map-marker" v-for="(marker, index) in markArray" :key="index">
+    <div v-if="isVisible" class="map-marker" v-for="(marker, index) in originalMarkArray" :key="index">
       <yandex-map-default-marker v-if="marker.isVisible"
           :settings="{
-            coordinates: marker.coordinates as LngLat,
-            color: marker.color,
-            popup: {position: 'top', show: marker.popupVisible},
-            onClick: ()=> marker.popupVisible = !marker.popupVisible
+            coordinates: [marker.longitude, marker.latitude],
+            color: {day: marker.color, night: marker.color},
+            popup: {position: 'top', show: popupVisibleArray[index]},
+            onClick: ()=> popupVisibleArray[index] = !popupVisibleArray[index]
         }">
         <template #popup>
           <div class="marker-popup">
