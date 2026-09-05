@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import {
-  YandexMap,
-  YandexMapDefaultFeaturesLayer,
-  YandexMapDefaultMarker,
-  YandexMapDefaultSchemeLayer, YandexMapFeature
-} from "vue-yandex-maps";
+  import {
+    YandexMap,
+    YandexMapDefaultFeaturesLayer,
+    YandexMapDefaultMarker,
+    YandexMapDefaultSchemeLayer, YandexMapFeature
+  } from "vue-yandex-maps";
 
-  import {ref, shallowRef} from "vue";
-  import type {YMap} from "@yandex/ymaps3-types";
+  import {ref} from "vue";
   import type MapObject from "@/types/MapObject.ts";
 
-  const map = shallowRef<null | YMap>(null);
+  const mapModel: any = defineModel();
 
   const props = defineProps<{
     originalMarkArray: MapObject[],
@@ -26,7 +25,7 @@ import {
 
 <template>
   <yandex-map
-      v-model="map"
+      v-model="mapModel"
       :settings="{
         location: {
           center: [37.617644, 55.755819],

@@ -2,8 +2,9 @@
   import ObjectCard from "@/components/ObjectCard.vue";
   import type MapObject from "@/types/MapObject.ts";
   import markers from "./mock.json"
-  import {ref} from "vue";
+  import {ref, shallowRef} from "vue";
   import CustomMap from "@/components/CustomMap.vue";
+  import type {YMap} from "@yandex/ymaps3-types";
 
   const markGroupArray = ref(new Map());
 
@@ -41,6 +42,7 @@
     return newColor;
   }
 
+  //Преобразование содержимого JSON файла в массив объектов MapObject
   const markerArray = ref<MapObject[]>((markers.markers.map((item) => {
     let titleArray = item.title.split(" ");
     return {
@@ -58,7 +60,16 @@
     showMapObjects.value = visible;
     markerArray.value.map((marker)=> marker.isVisible = visible);
     refreshMarkGroupArray()
+    if (visible){
+      mapModel.value?.setLocation({
+        center: [37.617644, 55.755819],
+        zoom: 8,
+        duration: 500
+      })
+    }
   }
+
+  const mapModel = shallowRef<null | YMap>(null);
 
 </script>
 
@@ -66,6 +77,7 @@
   <div class="main-window">
     <main>
       <CustomMap
+          v-model="mapModel"
           :originalMarkArray="markerArray"
           :colorGroups="markGroupArray"
           :isVisible="showMapObjects"></CustomMap>
@@ -80,6 +92,7 @@
             v-for="marker in markerArray"
             :key="marker.id"
             :mapObject="marker"
+            v-model="mapModel"
             @change-visibility="refreshMarkGroupArray"></ObjectCard>
       </div>
     </aside>

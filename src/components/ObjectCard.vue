@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import type MapObject from "@/types/MapObject.ts";
-  const props = defineProps<{ mapObject: MapObject}>()
+  const props = defineProps<{ mapObject: MapObject, }>()
+
+  const mapModel: any = defineModel();
 
   const emit = defineEmits(['change-visibility']);
 
@@ -9,14 +11,22 @@
     emit('change-visibility')
   }
 
+  function centerMark(){
+    mapModel.value?.setLocation({
+      center: [props.mapObject.longitude, props.mapObject.latitude],
+      zoom: 12,
+      duration: 1000
+    })
+  }
+
 </script>
 
 <template>
-  <div class="card">
+  <div class="card" @click="centerMark">
     <span class="card__badge" :style="{backgroundColor: mapObject.color}"></span>
     <h5 class="card__title">{{ mapObject.title }}</h5>
     <div class="card__checkbox">
-      <input type="checkbox" v-model="mapObject.isVisible" @click="changeVisibility"> Показать
+      <input type="checkbox" v-model="mapObject.isVisible" @click.stop="changeVisibility"> Показать
     </div>
     <div class="card__description">
       <b>{{ mapObject.description }}</b>
