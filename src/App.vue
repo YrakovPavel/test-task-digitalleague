@@ -5,9 +5,30 @@
   import {ref} from "vue";
   import CustomMap from "@/components/CustomMap.vue";
 
-  let colorsArray: string[] = [];
+  const markGroupArray = ref(new Map());
 
-  const showMapObjects = ref<boolean>(true);
+  //Разбивает маркеры по цветовым группам для отрисовки линий
+  function setMarkGroupArray(array: MapObject[]){
+    let markArray = new Map();
+    for (const marker of array){
+      if (marker.isVisible){
+        if (markArray.has(marker.color)){
+          markArray.set(marker.color, [...markArray.get(marker.color), [marker.longitude, marker.latitude]] )
+        }
+        else{
+          markArray.set(marker.color, [[marker.longitude, marker.latitude]]);
+        }
+      }
+    }
+    return markArray;
+  }
+
+  //Обновляет массив линий
+  function refreshMarkGroupArray(){
+    markGroupArray.value = setMarkGroupArray(markerArray.value);
+  }
+
+  let colorsArray: string[] = [];
 
   //Возвращает готовый цвет, если такая цветовая группа уже существует
   //Иначе генерирует новый цвет
@@ -28,23 +49,38 @@
       isVisible: true}
   })))
 
+  refreshMarkGroupArray()
+
+  const showMapObjects = ref<boolean>(true);
+
+  //Изменяет видимость маркеров и линий в зависимости от входного параметра
+  function changeMapObjectsVisibility(visible: boolean){
+    showMapObjects.value = visible;
+    markerArray.value.map((marker)=> marker.isVisible = visible);
+    refreshMarkGroupArray()
+  }
+
 </script>
 
 <template>
   <div class="main-window">
     <main>
-      <CustomMap :originalMarkArray="markerArray" :isVisible="showMapObjects"></CustomMap>
+      <CustomMap
+          :originalMarkArray="markerArray"
+          :colorGroups="markGroupArray"
+          :isVisible="showMapObjects"></CustomMap>
     </main>
     <aside>
       <div class="button-panel">
-        <button class="btn btn-danger" @click="showMapObjects = false">Очистить</button>
-        <button class="btn btn-primary" @click="showMapObjects = true">Поиск</button>
+        <button class="btn btn-danger" @click="changeMapObjectsVisibility(false)">Очистить</button>
+        <button class="btn btn-primary" @click="changeMapObjectsVisibility(true)">Поиск</button>
       </div>
       <div v-if="showMapObjects" class="object-cards">
         <ObjectCard
             v-for="marker in markerArray"
             :key="marker.id"
-            :mapObject="marker"></ObjectCard>
+            :mapObject="marker"
+            @change-visibility="refreshMarkGroupArray"></ObjectCard>
       </div>
     </aside>
   </div>

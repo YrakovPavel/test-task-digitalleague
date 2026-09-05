@@ -1,6 +1,14 @@
 <script setup lang="ts">
   import type MapObject from "@/types/MapObject.ts";
-  defineProps<{mapObject: MapObject}>()
+  const props = defineProps<{ mapObject: MapObject}>()
+
+  const emit = defineEmits(['change-visibility']);
+
+  function changeVisibility(){
+    props.mapObject.isVisible = !props.mapObject.isVisible;
+    emit('change-visibility')
+  }
+
 </script>
 
 <template>
@@ -8,7 +16,7 @@
     <span class="card__badge" :style="{backgroundColor: mapObject.color}"></span>
     <h5 class="card__title">{{ mapObject.title }}</h5>
     <div class="card__checkbox">
-      <input type="checkbox" checked @click="mapObject.isVisible = !mapObject.isVisible"> Показать
+      <input type="checkbox" v-model="mapObject.isVisible" @click="changeVisibility"> Показать
     </div>
     <div class="card__description">
       <b>{{ mapObject.description }}</b>
