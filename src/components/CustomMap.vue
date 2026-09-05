@@ -6,20 +6,15 @@
     YandexMapDefaultSchemeLayer, YandexMapFeature
   } from "vue-yandex-maps";
 
-  import {ref} from "vue";
   import type MapObject from "@/types/MapObject.ts";
 
   const mapModel: any = defineModel();
 
-  const props = defineProps<{
+  defineProps<{
     originalMarkArray: MapObject[],
     colorGroups: any,
-    isVisible: boolean}>()
-
-  const popupVisibleArray = ref<boolean[]>([]);
-  for (let i = 0; i < props.originalMarkArray.length; i++){
-    popupVisibleArray.value.push(false);
-  }
+    isVisible: boolean
+  }>()
 
 </script>
 
@@ -53,8 +48,8 @@
           :settings="{
             coordinates: [marker.longitude, marker.latitude],
             color: {day: marker.color, night: marker.color},
-            popup: {position: 'top', show: popupVisibleArray[index]},
-            onClick: ()=> popupVisibleArray[index] = !popupVisibleArray[index]
+            popup: {position: 'top', show: marker.popupVisible},
+            onClick: ()=> marker.popupVisible = !marker.popupVisible
         }">
         <template #popup>
           <div class="marker-popup">

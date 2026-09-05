@@ -5,5 +5,5 @@ import { createYmaps } from 'vue-yandex-maps';
 import App from './App.vue'
 
 createApp(App).use(createYmaps({
-    apikey: "api_key",
+    apikey: "API_KEY",
     strictMode: true})).mount('#app')

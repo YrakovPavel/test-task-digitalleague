@@ -12,6 +12,7 @@
   }
 
   function centerMark(){
+    props.mapObject.popupVisible = true;
     mapModel.value?.setLocation({
       center: [props.mapObject.longitude, props.mapObject.latitude],
       zoom: 12,

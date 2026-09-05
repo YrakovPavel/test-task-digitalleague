@@ -6,8 +6,6 @@
   import CustomMap from "@/components/CustomMap.vue";
   import type {YMap} from "@yandex/ymaps3-types";
 
-  const markGroupArray = ref(new Map());
-
   //Разбивает маркеры по цветовым группам для отрисовки линий
   function setMarkGroupArray(array: MapObject[]){
     let markArray = new Map();
@@ -24,9 +22,36 @@
     return markArray;
   }
 
+  const markGroupArray = ref(new Map());
+
   //Обновляет массив линий
   function refreshMarkGroupArray(){
     markGroupArray.value = setMarkGroupArray(markerArray.value);
+  }
+
+  const showMapObjects = ref<boolean>(true);
+
+  //Включает видимость маркеров и линий
+  function turnOnMapObjects(){
+    showMapObjects.value = true;
+    markerArray.value.map((marker)=> marker.isVisible = true);
+    refreshMarkGroupArray()
+    mapModel.value?.setLocation({
+      center: [37.617644, 55.755819],
+      zoom: 8,
+      duration: 500
+    })
+  }
+
+  //Выключает видимость маркеров и линий
+  function turnOffMapObjects(){
+    showMapObjects.value = false;
+    markerArray.value.map((marker)=> {
+      marker.isVisible = false;
+      marker.popupVisible = false;
+      return marker;
+    });
+    refreshMarkGroupArray()
   }
 
   let colorsArray: string[] = [];
@@ -48,26 +73,11 @@
     return {
       ...item,
       color: getColor(Number(titleArray[titleArray.length - 1])),
-      isVisible: true}
+      isVisible: true,
+      popupVisible: false}
   })))
 
   refreshMarkGroupArray()
-
-  const showMapObjects = ref<boolean>(true);
-
-  //Изменяет видимость маркеров и линий в зависимости от входного параметра
-  function changeMapObjectsVisibility(visible: boolean){
-    showMapObjects.value = visible;
-    markerArray.value.map((marker)=> marker.isVisible = visible);
-    refreshMarkGroupArray()
-    if (visible){
-      mapModel.value?.setLocation({
-        center: [37.617644, 55.755819],
-        zoom: 8,
-        duration: 500
-      })
-    }
-  }
 
   const mapModel = shallowRef<null | YMap>(null);
 
@@ -84,8 +94,8 @@
     </main>
     <aside>
       <div class="button-panel">
-        <button class="btn btn-danger" @click="changeMapObjectsVisibility(false)">Очистить</button>
-        <button class="btn btn-primary" @click="changeMapObjectsVisibility(true)">Поиск</button>
+        <button class="btn btn-danger" @click="turnOffMapObjects">Очистить</button>
+        <button class="btn btn-primary" @click="turnOnMapObjects">Поиск</button>
       </div>
       <div v-if="showMapObjects" class="object-cards">
         <ObjectCard
@@ -123,7 +133,6 @@
 
   .button-panel{
     width: 100%;
-    height: 10%;
     display: flex;
     align-self: center;
     align-items: center;
@@ -134,7 +143,8 @@
 
   .btn{
     width: 35%;
-    height: 70%;
+    margin-bottom: 12px;
+    margin-top: 12px;
     font-size: 18px;
   }
 

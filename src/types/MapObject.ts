@@ -6,4 +6,5 @@ export default interface MapObject{
     longitude: number;
     color: string;
     isVisible: boolean;
+    popupVisible: boolean
 }
